@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace Platformer
 {
@@ -31,6 +32,7 @@ namespace Platformer
 
         [SerializeField] private UnityEvent _eventJump;
         [SerializeField] private UnityEvent _eventCollectCrystall;
+
         void Start()
         {
             rigidbody = GetComponent<Rigidbody2D>();
@@ -54,6 +56,7 @@ namespace Platformer
             {
                 enemy.SetActive(false);
             }
+            Time.timeScale = 0f;
         }
         private void FixedUpdate()
         {
@@ -159,9 +162,15 @@ namespace Platformer
             if (other.gameObject.tag == "Coin")
             {
                 _eventCollectCrystall?.Invoke();
+                int coinsBefore = gameManager.coinsCounter;
                 gameManager.coinsCounter += 1;
                 _portalLogic.CoinChecker();
                 Destroy(other.gameObject);
+                if (SceneManager.GetActiveScene().name.Equals("Level1"))
+                {
+                    FindFirstObjectByType<Level1Manager>().OnCrystalCollected(coinsBefore);
+                }
+               
             }
         }
     }

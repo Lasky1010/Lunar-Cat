@@ -11,6 +11,13 @@ public class PortalLogic : MonoBehaviour
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private GameObject _endImageAnim;
     [SerializeField] private AudioClip _portalClip;
+    private Animator _cameraAnimator;
+    [SerializeField] private AudioClip _wallMovingChaseAudio;
+
+    public void Awake()
+    {
+        _cameraAnimator = Camera.main.GetComponent<Animator>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -42,7 +49,10 @@ public class PortalLogic : MonoBehaviour
         if (_gameManager.coinsCounter == _needCoins - _wallMovedCoins)
         {
             Debug.Log("MoveWall");
+            FindFirstObjectByType<Level1Manager>().OnWallStartMoving();
+            _gameManager.ChangeMusic(_wallMovingChaseAudio);
             _wall.SetActive(true);
+            _cameraAnimator.SetBool("wallMoving", true);
         }
     }
 }
